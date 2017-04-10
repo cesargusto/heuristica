@@ -7,7 +7,6 @@ import java.util.Random;
 public class Solucao {
 
 	private Inicializa in;
-	private int tamanhoPop;
 	private int[]solucao;
 	private int qtItens;
 	private int capMochila;
@@ -17,7 +16,6 @@ public class Solucao {
 	
 	public Solucao() throws NumberFormatException, IOException{
 		this.in = new Inicializa();
-		this.tamanhoPop = in.tamanhoPop;
 		this.arq = new Arquivo(in.nomearq);
 		this.qtItens = arq.getQuantItens();
 		this.capMochila = arq.getPesoMaxMochila();
@@ -26,67 +24,88 @@ public class Solucao {
 		this.rand = new Random();
 	}
 	
-    public Solucao criaMochilaAleatoria() throws NumberFormatException, IOException{
-		Solucao s = new Solucao();
+    public void criaMochilaAleatoria() throws NumberFormatException, IOException{
 		
 		for(int i = 0;i < qtItens; i++){
 			if(!rand.nextBoolean())
-				s.setSolucao(0,i);
+				this.setSolucao(0,i);
 			else
 			{
-				s.setSolucao(1, i);		//se s nao for aceito desfaz alteracao e sai
-				if(!aceitaMochila(s))
+				this.setSolucao(1, i);		//se s nao for aceito desfaz alteracao e sai
+				if(!aceitaMochila())
 				{
-					s.setSolucao(0, i);
+					this.setSolucao(0, i);
 					break;
 				}
 			}
 		}
-		return s;
     }	
     
-    public boolean aceitaMochila(Solucao mochila){
+    public boolean aceitaMochila(){
         
     	int contador = 0;
         
         for(int i = 0; i < qtItens;i++)
         {
-        	if(mochila.getSolucao()[i] == 1)
-        		contador = contador + dados.get(i).getTamanhoItem();
+        	if(solucao[i] == 1)
+        		contador += dados.get(i).getTamanhoItem();
         }
         if (contador <= this.capMochila)
         	return true;
         else
             return false;
     }
-    public int calculaPeso(Solucao mochila){
+    
+    //SOMA PESOS
+    public int calculaPeso(){
     	int peso = 0;
         for(int i = 0; i < qtItens;i++)
         {
-        	if(mochila.getSolucao()[i] == 1)
-        		peso = peso + dados.get(i).getTamanhoItem();
+        	if(solucao[i] == 1)
+        		peso += dados.get(i).getTamanhoItem();
         }    	
     	return peso;
     }
+    
     //SOMA OS BENEFICIOS
-	public int funcaoObjetivo(Solucao so){
+	public int calculaFo(){
 		int fo = 0;
 		for(int i = 0;i<this.qtItens;i++){
-			if(so.getSolucao()[i] == 1){
+			if(solucao[i] == 1){
 				fo += this.dados.get(i).getBeneficioItem();
 			}
 		}
 		return fo;
 	}
-
-	public int[] getSolucao() {
-		return solucao;
+	
+	public void mutacao(int posicao){
+		if(this.getSolucao(posicao)== 1)
+			this.setSolucao(0, posicao);
+		else
+			this.setSolucao(1, posicao);
+	}
+	
+	public int getSolucao(int posicao) {
+		return solucao[posicao];
 	}
 	
 	public void setSolucao(int elemento, int posicao) {
 		this.solucao[posicao] = elemento;
 	}	
+
+	public int[] getSolucao() {
+		return solucao;
+	}
 	
+	public void setSolucao(int[] solution) {
+		for(int i = 0;i < solution.length;i++)
+			this.solucao[i] = solution[i];
+	}
+	
+	public int getQtItens() {
+		return qtItens;
+	}
+
 	public String toString(){
 		String st="";
 		for(int i = 0;i < solucao.length;i++){

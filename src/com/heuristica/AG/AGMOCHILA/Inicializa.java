@@ -6,8 +6,8 @@ public class Inicializa {
 	public int tamanhoPop;
 	
 	public Inicializa(){
-		this.nomearq = "KNAPDATA40";
-		this.tamanhoPop = 10;
+		this.nomearq = "teste1";
+		this.tamanhoPop = 5;
 	}
 	
 	public Inicializa(String nomeArq, int tamanhoP){

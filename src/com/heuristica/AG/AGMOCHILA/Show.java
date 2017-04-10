@@ -1,19 +1,19 @@
 package com.heuristica.AG.AGMOCHILA;
 
-import java.util.ArrayList;
-
 public class Show {
 	
-	public static void show(ArrayList<Solucao> sol){
-		
-		for(int j = 0;j<sol.size();j++){
-			int[]vetor = sol.get(j).getSolucao();
-			
-			for(int i = 0;i < vetor.length;i++)
-				System.out.printf("%d ",vetor[i]);
-			
-			System.out.println("\nBENEFICIO......:"+sol.get(j).funcaoObjetivo(sol.get(j)));
-			System.out.println("PESO MOCHILA...:"+sol.get(j).calculaPeso(sol.get(j)));
-		}
+	public static void show(Populacao pop){
+		System.out.println("Peso\tBeneficio\tSolucao");
+		for(int j = 0;j < pop.getTamanhoPop();j++){
+			System.out.printf("%d\t",pop.getPopulacao().get(j).calculaPeso());
+			System.out.printf("%d\t\t",pop.getPopulacao().get(j).calculaFo());
+			System.out.println(pop.getPopulacao().get(j).toString());
+			}
+		System.out.println();
+	}
+	
+	public static void showSol(Solucao s){
+		System.out.printf("%d\t%d\t\t",s.calculaPeso(),s.calculaFo());
+		System.out.println(s.toString());		
 	}
 }
