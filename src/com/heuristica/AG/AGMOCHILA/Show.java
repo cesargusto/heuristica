@@ -9,7 +9,7 @@ public class Show {
 			System.out.printf("%d\t\t",pop.getPopulacao().get(j).calculaFo());
 			System.out.println(pop.getPopulacao().get(j).toString());
 			}
-		System.out.println();
+		System.out.println("--------------------------------------------------------");
 	}
 	
 	public static void showSol(Solucao s){

@@ -4,16 +4,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Populacao {
+public class Populacao implements Cloneable{
 	
 	private int tamanhoPop;
 	private Solucao so;
+	private Solucao melhor_so_pop;
 	private ArrayList<Solucao> populacao;
+	private ArrayList<Solucao> filhos;
 	
 	public Populacao(Inicializa in) throws NumberFormatException, IOException{
 		this.tamanhoPop = in.tamanhoPop;
 		this.so = new Solucao();
+		this.melhor_so_pop = new Solucao();
 		this.populacao = new ArrayList<>();
+		this.filhos = new ArrayList<>();
 	}
 	
 	public void geraPopAleat() throws NumberFormatException, IOException{
@@ -24,11 +28,13 @@ public class Populacao {
 			populacao.add(so);
 		}
 	}
-	
+
 	public int Roleta(){
 		
 		ArrayList<Integer> aptidoes = new ArrayList<>();
+		
 		Integer soma = 0;
+		
 		for(int i = 0;i < tamanhoPop;i++){
 			soma += populacao.get(i).calculaFo();
 			aptidoes.add(soma);
@@ -49,18 +55,15 @@ public class Populacao {
 		}
 		return posicao;
 	}
-	
-	public Solucao cruzamento(Solucao pai1, Solucao pai2, int ponto) throws NumberFormatException, IOException{
-		Solucao filho = new Solucao();
-		for(int i = 0;i < pai1.getQtItens();i++){
-			if(i < ponto)
-				filho.setSolucao(pai1.getSolucao(i), i);
-			else
-				filho.setSolucao(pai2.getSolucao(i), i);
-		}
-		return filho;
+
+	public Solucao getMelhor_so_pop() {
+		return melhor_so_pop;
 	}
-	
+
+	public void setMelhor_so_pop(Solucao melhor_so_pop) {
+		this.melhor_so_pop = melhor_so_pop;
+	}
+
 	public int getTamanhoPop() {
 		return tamanhoPop;
 	}
@@ -75,6 +78,18 @@ public class Populacao {
 	
 	public void setPopulacao(ArrayList<Solucao> populacao) {
 		this.populacao = populacao;
+	}
+
+	public ArrayList<Solucao> getFilhos() {
+		return filhos;
+	}
+
+	public void setFilhos(ArrayList<Solucao> filhos) {
+		this.filhos = filhos;
+	}
+	@Override
+	public Populacao clone() throws CloneNotSupportedException{
+		return (Populacao) super.clone();
 	}
 }
  

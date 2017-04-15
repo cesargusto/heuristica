@@ -8,6 +8,7 @@ public class Solucao {
 
 	private Inicializa in;
 	private int[]solucao;
+	private int fo;
 	private int qtItens;
 	private int capMochila;
 	private ArrayList<Item> dados;
@@ -22,6 +23,7 @@ public class Solucao {
 		this.dados = arq.getDados();
 		this.solucao = new int[qtItens];
 		this.rand = new Random();
+		this.calculaFo();
 	}
 	
     public void criaMochilaAleatoria() throws NumberFormatException, IOException{
@@ -40,11 +42,9 @@ public class Solucao {
 			}
 		}
     }	
-    
+
     public boolean aceitaMochila(){
-        
     	int contador = 0;
-        
         for(int i = 0; i < qtItens;i++)
         {
         	if(solucao[i] == 1)
@@ -78,12 +78,41 @@ public class Solucao {
 		return fo;
 	}
 	
+	public boolean avalia(Thebest tb, Populacao po){
+		
+		if(this.aceitaMochila()){
+			int fo = this.calculaFo();
+			if(fo > po.getMelhor_so_pop().calculaFo())
+				po.setMelhor_so_pop(this);
+			if(fo > tb.getMelhor_so_global().calculaFo()){
+				tb.setMelhor_so_global(this);
+			}
+			return true;
+		}else
+			return false;
+	}
+
+	public int getFo() {
+		return fo;
+	}
+
+	public void setFo(int fo) {
+		this.fo = fo;
+	}
+
 	public void mutacao(int posicao){
-		if(this.getSolucao(posicao)== 1)
+		if(this.getSolucao(posicao) == 1)
 			this.setSolucao(0, posicao);
 		else
 			this.setSolucao(1, posicao);
 	}
+
+	public void cruzamento(Solucao pai1, Solucao pai2, int ponto) throws NumberFormatException, IOException{
+		for(int i = 0;i < pai1.getQtItens();i++){
+			if(i < ponto){this.setSolucao(pai1.getSolucao(i), i);}
+			else{this.setSolucao(pai2.getSolucao(i), i);}
+		}
+	}	
 	
 	public int getSolucao(int posicao) {
 		return solucao[posicao];
