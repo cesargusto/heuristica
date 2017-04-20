@@ -11,11 +11,13 @@ public class Populacao implements Cloneable{
 	private Solucao melhor_so_pop;
 	private ArrayList<Solucao> populacao;
 	private ArrayList<Solucao> filhos;
+	private Inicializa in;
 	
 	public Populacao(Inicializa in) throws NumberFormatException, IOException{
+		this.in = in;
 		this.tamanhoPop = in.tamanhoPop;
-		this.so = new Solucao();
-		this.melhor_so_pop = new Solucao();
+		this.so = new Solucao(in);
+		this.melhor_so_pop = new Solucao(in);
 		this.populacao = new ArrayList<>();
 		this.filhos = new ArrayList<>();
 	}
@@ -23,8 +25,8 @@ public class Populacao implements Cloneable{
 	public void geraPopAleat() throws NumberFormatException, IOException{
 		
 		for(int i = 0;i < this.tamanhoPop;i++){
-			Solucao so = new Solucao();
-			so.criaMochilaAleatoria();
+			Solucao so = new Solucao(in);
+			so.cria_mochila_aleatoria();
 			populacao.add(so);
 		}
 	}
@@ -33,14 +35,15 @@ public class Populacao implements Cloneable{
 		
 		ArrayList<Integer> aptidoes = new ArrayList<>();
 		
-		Integer soma = 0;
+		int soma = 0;
 		
 		for(int i = 0;i < tamanhoPop;i++){
 			soma += populacao.get(i).calculaFo();
 			aptidoes.add(soma);
 		}
 		Random r = new Random();
-		int rand = r.nextInt(aptidoes.get(aptidoes.size()-1));
+		int ultimo = aptidoes.get(aptidoes.size()-1);
+		int rand = r.nextInt(ultimo);
 		int posicao = 0;
 		
 		for(int i = 0;i<aptidoes.size();i++){
@@ -56,6 +59,18 @@ public class Populacao implements Cloneable{
 		return posicao;
 	}
 
+	public int Torneio(){
+		Random r = new Random();
+		int x = r.nextInt(tamanhoPop);
+		int y = r.nextInt(tamanhoPop);
+		int t1 = populacao.get(x).calculaFo();
+		int t2 = populacao.get(y).calculaFo();
+		if( t1 > t2)
+			return x;
+		else
+			return y;
+	}
+	
 	public Solucao getMelhor_so_pop() {
 		return melhor_so_pop;
 	}

@@ -13,7 +13,7 @@ public class Show {
 	}
 	
 	public static void showSol(Solucao s){
-		System.out.printf("%d\t%d\t\t",s.calculaPeso(),s.calculaFo());
-		System.out.println(s.toString());		
+		System.out.printf("\t%d\t%d\t\t",s.calculaPeso(),s.calculaFo());
+		//System.out.println(s.toString());		
 	}
 }

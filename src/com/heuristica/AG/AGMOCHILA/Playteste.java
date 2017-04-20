@@ -4,53 +4,49 @@ import java.io.IOException;
 
 public class Playteste {
 
-	public static void main(String[]args) throws NumberFormatException, IOException{
+	public static void main(String[]args) throws NumberFormatException, IOException, CloneNotSupportedException{
 		
-		Thebest t = new Thebest();
-		Inicializa i = new Inicializa();
-		Populacao po = new Populacao(i);
-		Populacao n_po = new Populacao(i);
+		int numExec = 3;
+		/*String exp1 = "KNAPDATA40";
+		String exp2 = "KNAPDATA100";
+		String exp3 = "KNAPDATA10000";
+		String exp4 = "KNAPDATA10000_2";
+		String exp5 = "KNAPDATA11000";*/
+		String exp6 = "KNAPDATA100000";
 		
-		po.geraPopAleat();
+		/*
+		for(int i = 0;i < numExec;i++){
+			System.out.printf("Execução [ %d ] Instância [ %s ]\n",i , exp1);
+			Controller.ag(exp1);
+		}
 		
-		System.out.println("PO\n");
-		Show.show(po);
+		for(int i = 0;i < numExec;i++){
+			System.out.printf("Execução [ %d ] Instância [ %s ]\n",i , exp2);
+			Controller.ag(exp2);
+		}
 		
-		while(n_po.getPopulacao().size() < i.tamanhoPop){
-			
-			Solucao p1 = new Solucao();
-			Solucao p2 = new Solucao();
-			
-			Solucao f1 = new Solucao();
-			Solucao f2 = new Solucao();
-			
-			int ip1 = po.Roleta();
-			int ip2 = po.Roleta();
-			
-			p1 = po.getPopulacao().get(ip1);
-			p2 = po.getPopulacao().get(ip2);
-			
-			int ponto = p1.getQtItens()/2;
-			
-			f1.cruzamento(p1, p2, ponto);
-			f2.cruzamento(p2, p1, ponto);
-			
-			if(f1.avalia(t,po))
-				n_po.setPopulacao(f1);
-			if(f2.avalia(t, po))
-				n_po.setPopulacao(f2);
-		}//while
+		for(int i = 0;i < numExec;i++){
+			System.out.printf("Execução [ %d ] Instância [ %s ]\n",i , exp3);
+			Controller.ag(exp3);
+		}
 		
-		System.out.println("N_PO gerado por cruzamento\n");
-		Show.show(n_po);
+		for(int i = 0;i < numExec;i++){
+			System.out.printf("Execução [ %d ] Instância [ %s ]\n",i , exp4);
+			Controller.ag(exp4);
+		}
 		
-		po = n_po;
-		System.out.println("PO");		
-		Show.show(po);		
+		for(int i = 0;i < numExec;i++){
+			System.out.printf("Execução [ %d ] Instância [ %s ]\n",i , exp5);
+			Controller.ag(exp5);
+		}
+		*/
+		/*
+		for(int i = 0;i < numExec;i++){
+			System.out.printf("Execução [ %d ] Instância [ %s ]\n",i , exp6);
+			Controller.ag(exp6);
+		}
+		*/
+		System.out.printf("\n*** [ FIM ] ***\n");
 		
-		n_po = new Populacao(i);
-		n_po.geraPopAleat();
-		Show.show(n_po);
-			
 	}
 }

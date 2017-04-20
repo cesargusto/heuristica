@@ -1,3 +1,0 @@
-Linha1 Coluna1; Linha1 Coluna2
-Linha2 Coluna1; Linha2 Coluna2
-Linha3 Coluna1; Linha3 Coluna2
