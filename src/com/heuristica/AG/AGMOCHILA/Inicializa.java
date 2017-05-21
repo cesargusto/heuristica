@@ -12,11 +12,10 @@ public class Inicializa {
 	
 	public Inicializa(String arquivo){
 		this.nomearq = arquivo;
-		//this.nomearq = "teste1";80,200
-		this.tamanhoPop = 80;
-		this.numGeracoes = 600;
+		this.tamanhoPop = 100; //100
+		this.numGeracoes = 500; //500
 		this.prob_cruzamento = 0.65;
-		this.prob_mutacao = 0.8;
+		this.prob_mutacao = 0.3;
 		this.tx_inapto = 0.2;
 		this.selecao = 0;	//0 - TORNEO; 1 - ROLETA
 	}

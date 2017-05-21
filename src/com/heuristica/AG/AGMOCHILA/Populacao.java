@@ -23,10 +23,15 @@ public class Populacao implements Cloneable{
 	}
 	
 	public void geraPopAleat() throws NumberFormatException, IOException{
-		
+		int melhorfo = -1*Integer.MAX_VALUE;
 		for(int i = 0;i < this.tamanhoPop;i++){
 			Solucao so = new Solucao(in);
 			so.cria_mochila_aleatoria();
+			int focorrente = so.calculaFo();
+			if(melhorfo < focorrente){
+				melhorfo = focorrente;
+				this.setMelhor_so_pop(so);
+			}
 			populacao.add(so);
 		}
 	}

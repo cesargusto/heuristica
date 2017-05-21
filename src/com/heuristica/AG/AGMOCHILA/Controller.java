@@ -3,6 +3,8 @@ package com.heuristica.AG.AGMOCHILA;
 import java.io.IOException;
 import java.util.Random;
 
+import com.heuristica.SA.SAMOCHILA.SA;
+
 public class Controller {
 
 	public static void ag(String nome)throws NumberFormatException, IOException, CloneNotSupportedException{
@@ -14,8 +16,14 @@ public class Controller {
 		Populacao novaPop = new Populacao(in);
 		Random rand = new Random();
 		
+		String caminhoAG = "experimento/ag/";
+		String caminhoSA = "experimento/agsa/";
+		
 		String nomeGer = "ger_"+nome;
 		String nomePop = "pop_"+nome;
+		
+		String nomeGASAc = "GASAC_"+nome;
+		String nomeGASAm = "GASAM_"+nome;
 		
     	/***GERA POPULACAO ALEATÓRIA***/
     	pop.geraPopAleat();
@@ -80,9 +88,9 @@ public class Controller {
 		        			if(Util.prob(in.tx_inapto))
 		        				novaPop.setPopulacao(filho1);
 		        			else
-		        				System.out.printf("");//Filho1 mutado FORA
+		        				System.out.printf("");//Filho1 mutated out
 		        			}
-		    		}//se nao houver mutação avalia também
+		    		}//if there aren't mutation do the same.
 		    		else{
 		    			if(filho1.avalia(tb, pop))
 		    				novaPop.setPopulacao(filho1);
@@ -130,34 +138,35 @@ public class Controller {
 		    }/* WHILE POPULAÇOES */
 
 /***************************[ AO FIM DE CADA POPULAÇÃO ]*************************************/
-		
-    		//Guarda o melhor valor de função objetivo - grafico de convergencia
+    		
+    		//Storage the best value of objective function - convergence graph
     		tb.setMelhores_fo_pop(pop.getMelhor_so_pop().calculaFo());
     		tb.setMelhores_fo(tb.getMelhor_so_global().calculaFo());
     	
 		    //System.out.printf("[ GERAÇÃO %d DE %d ] \n",contador, in.numGeracoes);
 		    //Show.showSol(pop.getMelhor_so_pop());
 		    
-    		//faz copia da geracao atual e aloca uma nova geração
+    		//It is doing the copy of current generation and create a new generation
     		pop = novaPop.clone();    
 		    novaPop = new Populacao(in);
 		    
-		    //Insere na nova população o melhor individuo da geração anterior
+		    //Put the best individual of before generation on the new population
 		    novaPop.setPopulacao(tb.getMelhor_so_global());
 		    System.out.println("\ngeração: "+contador);
 		    contador++;
 		    
     	}/* WHILE GERAÇOES */
-    
-/****************************** [ RESULTADOS FINAIS ] **********************************/
 
-    	System.out.println("\nEVOLUÇÃO DO ALGORITMO\n");
+    	
+/****************************** [ GENETIC ALGORITHMS ] **********************************/
+
+    	//System.out.println("\nEVOLUÇÃO DO ALGORITMO\n");
     	//System.out.println(tb.getMelhores_fo_pop());
     	//System.out.println(tb.getMelhores_fo());
     	
     	Arq arq = new Arq();
-    	arq.grava(nomePop, tb.getMelhores_fo_pop());
-    	arq.grava(nomeGer, tb.getMelhores_fo());
+    	arq.grava(caminhoAG, nomePop, tb.getMelhores_fo_pop());
+    	arq.grava(caminhoAG, nomeGer, tb.getMelhores_fo());
     	
     	System.out.println("\n*** MELHOR SOLUÇÃO ***\n");
     	pop.getPopulacao().get(0).exibeSolucao(tb);
@@ -165,5 +174,22 @@ public class Controller {
     	Show.showSol(tb.getMelhor_so_global());
     	
     	System.out.printf("\n");
+    	
+/****************************** [ SIMULATED ANNEALING ] **********************************/
+    	/*
+    	SA sa = new SA();
+    	Solucao s_fim = sa.simAnnealing(tb.getMelhor_so_global(), tb);
+    	
+    	arq.grava(caminhoSA, nomeGASAc, tb.getMelhores_fo());
+    	arq.grava(caminhoSA, nomeGASAm, tb.getMelhores_fo_sa());
+    	
+    	System.out.println("\n*** FINAL SOLUTION ***\n");
+
+    	s_fim.exibeSolucaoSA(tb);
+    	System.out.printf("----------------------\n");
+    	Show.showSol(tb.getMelhor_so_sa_global());
+    	
+    	System.out.printf("\n");*/
+    	
 	}
 }

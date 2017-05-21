@@ -7,8 +7,8 @@ import java.util.ArrayList;
 
 public class Arq {
 
-	public void grava(String nomearq, ArrayList<Integer> array){
-		File arquivo = new File("experimento/"+nomearq+".txt");
+	public void grava(String path, String nomearq, ArrayList<Integer> array){
+		File arquivo = new File(path+""+nomearq+".txt");
 		try{
 			if(!arquivo.exists()){
 				arquivo.createNewFile();

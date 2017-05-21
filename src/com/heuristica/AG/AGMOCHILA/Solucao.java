@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Solucao {
+public class Solucao implements Cloneable{
 
 	private Inicializa in;
-	private int[]solucao;
+	private ArrayList<Boolean> solucao;
 	private int fo;
 	private int qtItens;
 	private int capMochila;
@@ -21,32 +21,51 @@ public class Solucao {
 		this.qtItens = arq.getQuantItens();
 		this.capMochila = arq.getPesoMaxMochila();
 		this.dados = arq.getDados();
-		this.solucao = new int[qtItens];
+		this.solucao = new ArrayList<>();
 		this.rand = new Random();
-		this.calculaFo();
+	}
+
+	public Solucao(Arquivo arquivo) throws IOException{
+		this.arq = arquivo;
+		this.dados = this.arq.getDados();
+		this.qtItens = arq.getQuantItens();
+		this.solucao = new ArrayList<>(qtItens);
+	}
+	
+	public Solucao(){
+		//this.qtItens = arquivo.getQuantItens();
+		this.solucao = new ArrayList<>();
+	}
+	
+	@Override
+	public Solucao clone() throws CloneNotSupportedException {
+		Solucao solCp = (Solucao) super.clone();
+		solCp.dados = new ArrayList<Item>(dados);
+		solCp.solucao = new ArrayList<Boolean>(solucao);
+		return solCp;
 	}
 	
     public void cria_mochila_aleatoria() throws NumberFormatException, IOException{
 		
 		for(int i = 0;i < qtItens; i++)
-				this.setSolucao(0,i);
+				this.setSolucaoAdd(false);
 		
 		int posicao = 0;
 		
 		if(Util.prob(in.tx_inapto)){
 			for(int i = 0;i < qtItens;i++){
 				if(!rand.nextBoolean())
-					this.setSolucao(0,i);
+					this.setSolucao(false,i);
 				else
-					this.setSolucao(1, i);		//se s nao for aceito desfaz alteracao e sai
+					this.setSolucao(true, i);		//se s nao for aceito desfaz alteracao e sai
 			}
 		}
 		else{
 			for(int i = 0;i < qtItens; i++){
 				posicao = rand.nextInt(qtItens);
-				this.setSolucao(1, posicao);
+				this.setSolucao(true, posicao);
 				if(!aceitaMochila()){
-					this.setSolucao(0, posicao);
+					this.setSolucao(false, posicao);
 					break;
 				}
 			}
@@ -56,19 +75,15 @@ public class Solucao {
     public void criaMochila2Aleatoria() throws NumberFormatException, IOException{
 		
 		for(int i = 0;i < qtItens; i++){
-				this.setSolucao(0,i);
+				this.setSolucao(false,i);
 		}
 		int posicao = 0;
-		
 		for(int i = 0;i < qtItens; i++){
-			
 			posicao = rand.nextInt(qtItens);
-			
-			this.setSolucao(1, posicao);
-			
+			this.setSolucao(true, posicao);
 			if(!Util.prob(in.tx_inapto)){
 				if(!aceitaMochila()){
-					this.setSolucao(0, posicao);
+					this.setSolucao(false, posicao);
 					break;
 				}
 			}
@@ -78,26 +93,31 @@ public class Solucao {
     
     public void cria_mochila_apta() throws NumberFormatException, IOException{
 		
-		for(int i = 0;i < qtItens; i++){
+    	Random rand = new Random();
+    	for(int i = 0;i < this.qtItens;i++){
+    		this.solucao.add(Boolean.FALSE);
+    	}
+		
+		for(int i = 0;i < this.qtItens; i++){
 			if(!rand.nextBoolean())
-				this.setSolucao(0,i);
+				this.setSolucao(false);
 			else
 			{
-				this.setSolucao(1, i);		//se s nao for aceito desfaz alteracao e sai
+				this.setSolucao(true);		//when not accept remove the last element and break for
 				if(!aceitaMochila())
 				{
-					this.setSolucao(0, i);
+					this.subSolucao(false, i);
 					break;
 				}
 			}
 		}
-    }	
-
+    }
+    
     public boolean aceitaMochila(){
     	int contador = 0;
         for(int i = 0; i < qtItens;i++)
         {
-        	if(solucao[i] == 1)
+        	if(solucao.get(i) == true)
         		contador += dados.get(i).getTamanhoItem();
         }
         if (contador <= this.capMochila)
@@ -107,21 +127,21 @@ public class Solucao {
     }
     
     //SOMA PESOS
-    public long calculaPeso(){
-    	long peso = 0;
+    public int calculaPeso(){
+    	int peso = 0;
         for(int i = 0; i < qtItens;i++)
         {
-        	if(solucao[i] == 1)
+        	if(solucao.get(i) == true)
         		peso += dados.get(i).getTamanhoItem();
         }    	
     	return peso;
     }
     
     //SOMA OS BENEFICIOS
-	public long calculaFo_Ben(){
-		long fo = 0;
+	public int calculaFo_Ben(){
+		int fo = 0;
 		for(int i = 0;i<this.qtItens;i++){
-			if(solucao[i] == 1){
+			if(solucao.get(i) == true){
 				fo += this.dados.get(i).getBeneficioItem();
 			}
 		}
@@ -147,8 +167,9 @@ public class Solucao {
 		int b = this.capMochila;
 		int alfa = this.alfa_valor();
 		
-		for(int i = 0;i<this.qtItens;i++){
-			if(solucao[i] == 1){
+		for(int i = 0;i<this.solucao.size();i++){
+			boolean valor = this.getSolucao(i);
+			if(valor){
 				w += this.dados.get(i).getTamanhoItem();
 				p += this.dados.get(i).getBeneficioItem();
 			}
@@ -165,7 +186,9 @@ public class Solucao {
 	public boolean avalia(Thebest tb, Populacao po){
 		
 		if(this.aceitaMochila()){
+			
 			long fo = this.calculaFo();
+			
 			if(fo > po.getMelhor_so_pop().calculaFo())
 				po.setMelhor_so_pop(this);
 			if(fo > tb.getMelhor_so_global().calculaFo()){
@@ -176,6 +199,13 @@ public class Solucao {
 			return false;
 	}
 
+	public void geraVizinhoSA(int pos){
+		if(this.solucao.get(pos) == false)
+			this.solucao.set(pos, true);
+		else
+			this.solucao.set(pos, false);
+	}
+	
 	public int getFo() {
 		return fo;
 	}
@@ -183,36 +213,48 @@ public class Solucao {
 	public void setFo(int fo) {
 		this.fo = fo;
 	}
-
+	
 	public void mutacao(int posicao){
-		if(this.getSolucao(posicao) == 1)
-			this.setSolucao(0, posicao);
+		if(this.getSolucao(posicao) == true)
+			this.setSolucao(false, posicao);
 		else
-			this.setSolucao(1, posicao);
+			this.setSolucao(true, posicao);
 	}
 
 	public void cruzamento(Solucao pai1, Solucao pai2, int ponto) throws NumberFormatException, IOException{
-		for(int i = 0;i < pai1.getQtItens();i++){
-			if(i < ponto){this.setSolucao(pai1.getSolucao(i), i);}
-			else{this.setSolucao(pai2.getSolucao(i), i);}
-		}
+		ArrayList<Boolean> sub1 = new ArrayList<>(pai1.getSolucao().subList(0, ponto));
+		ArrayList<Boolean> sub2 = new ArrayList<>(pai2.getSolucao().subList(ponto, pai2.qtItens));
+		this.solucao.addAll(sub1);
+		this.solucao.addAll(sub2); 
 	}	
 	
-	public int getSolucao(int posicao) {
-		return solucao[posicao];
+	public boolean getSolucao(int posicao) {
+		return this.solucao.get(posicao).booleanValue();
 	}
 	
-	public void setSolucao(int elemento, int posicao) {
-		this.solucao[posicao] = elemento;
-	}	
-
-	public int[] getSolucao() {
+	public void setSolucao(boolean elemento, int posicao) {
+		this.solucao.set(posicao, elemento);
+	}
+	
+	public void setSolucaoAdd(boolean elemento) {
+		this.solucao.add(elemento);
+	}
+	
+	public void subSolucao(boolean elemento, int pos){
+		this.solucao.set(pos, elemento);
+	}
+	
+	public void setSolucao(boolean elemento) {
+		this.solucao.add(elemento);
+	}
+	
+	public ArrayList<Boolean> getSolucao() {
 		return solucao;
 	}
 	
-	public void setSolucao(int[] solution) {
+	public void setSolucao(boolean[] solution) {
 		for(int i = 0;i < solution.length;i++)
-			this.solucao[i] = solution[i];
+			this.solucao.add(i, solution[i]);
 	}
 	
 	public int getQtItens() {
@@ -221,17 +263,30 @@ public class Solucao {
 
 	public String toString(){
 		String st="";
-		for(int i = 0;i < solucao.length;i++){
-			st += solucao[i]+" ";
+		for(int i = 0;i < solucao.size();i++){
+			st += solucao.get(i)+" ";
 		}
 		return st;
 	}
 	
 	public void exibeSolucao(Thebest tb){
 	   	String nome = "";
-		long tamanho = 0, beneficio = 0;
+		int tamanho = 0, beneficio = 0;
 		for(int i = 0;i < qtItens;i++){
-			if(tb.getMelhor_so_global().getSolucao()[i] == 1){
+			if(tb.getMelhor_so_global().getSolucao().get(i) == true){
+				nome = dados.get(i).getNomeItem();
+				tamanho = dados.get(i).getTamanhoItem();
+				beneficio = dados.get(i).getBeneficioItem();
+				
+				System.out.printf("%s\t%d\t%d\n",nome, tamanho, beneficio);
+			}
+		}
+	}
+	public void exibeSolucaoSA(Thebest tb){
+	   	String nome = "";
+		int tamanho = 0, beneficio = 0;
+		for(int i = 0;i < qtItens;i++){
+			if(tb.getMelhor_so_sa_global().getSolucao(i) == true){
 				nome = dados.get(i).getNomeItem();
 				tamanho = dados.get(i).getTamanhoItem();
 				beneficio = dados.get(i).getBeneficioItem();

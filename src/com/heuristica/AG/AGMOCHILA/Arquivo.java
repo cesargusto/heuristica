@@ -2,9 +2,7 @@ package com.heuristica.AG.AGMOCHILA;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
@@ -18,7 +16,7 @@ public class Arquivo {
 	private int pesoMaxMochila;
 	private int quantItens;
 	
-	Arquivo(String nomeArq) throws NumberFormatException, IOException
+	public Arquivo(String nomeArq) throws NumberFormatException, IOException
 	{
 		this.caminhoArq = "files/mochila/"+nomeArq+".txt";
 		this.is = new FileInputStream(this.caminhoArq);
